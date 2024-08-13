@@ -81,17 +81,7 @@ jobs:
           repository: microsoft/vcpkg
           ref: master
 
-      - name: Setup Docker for ARM64
-        if: matrix.target-arch == 'arm64'
-        run: |
-          docker pull arm64v8/ubuntu:latest
-          docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace arm64v8/ubuntu:latest /bin/bash -c "
-              apt-get update && apt-get install -y build-essential cmake
-              ./vcpkg install portaudio --triplet arm64-linux-release --recurse
-          "
-  
       - name: Bootstrap vcpkg
-        if: matrix.target-arch != 'arm64'
         run: ${{ runner.os == 'Windows' && './bootstrap-vcpkg.bat' || './bootstrap-vcpkg.sh' }}
 
       - name: Determine configuration
