@@ -1,6 +1,8 @@
 # PortAudioBin
 
 [![Fuck Russia](https://img.shields.io/badge/fuck-russia-e4181c.svg?labelColor=000000)](https://twitter.com/tyrrrz/status/1495972128977571848)
+[![Release](https://img.shields.io/github/release/xBaank/PortAudioBin.svg)](https://github.com/xBaank/PortAudioBin/releases)
+[![Downloads](https://img.shields.io/github/downloads/xBaank/PortAudioBin/total.svg)](https://github.com/xBaank/PortAudioBin/releases)
 
 **PortAudioBin** is a repository that contains static builds of [Portaudio](https://portaudio.com) for Windows, Linux and macOS.
 
