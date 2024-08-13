@@ -88,6 +88,7 @@ jobs:
         run: ${{ runner.os == 'Windows' && './bootstrap-vcpkg.bat' || './bootstrap-vcpkg.sh' }}
 
       - name: Create custom arm64 triplet file
+        if: ${{ runner.os == 'Linux' }}
         run: |
           mkdir -p triplets/community
           echo "set(VCPKG_TARGET_ARCHITECTURE arm64)" > triplets/community/arm64-linux-dynamic.cmake
@@ -95,6 +96,15 @@ jobs:
           echo "set(VCPKG_LIBRARY_LINKAGE dynamic)" >> triplets/community/arm64-linux-dynamic.cmake
           echo "set(VCPKG_CMAKE_SYSTEM_NAME Linux)" >> triplets/community/arm64-linux-dynamic.cmake
           echo "set(VCPKG_FIXUP_ELF_RPATH ON)" >> triplets/community/arm64-linux-dynamic.cmake
+      - name: Create custom arm64 triplet file
+        if: ${{ runner.os == 'Linux' }}
+        run: |
+          mkdir -p triplets/community
+          echo "set(VCPKG_TARGET_ARCHITECTURE x86)" > triplets/community/x86-linux-dynamic.cmake
+          echo "set(VCPKG_CRT_LINKAGE dynamic)" >> triplets/community/x86-linux-dynamic.cmake
+          echo "set(VCPKG_LIBRARY_LINKAGE dynamic)" >> triplets/community/x86-linux-dynamic.cmake
+          echo "set(VCPKG_CMAKE_SYSTEM_NAME Linux)" >> triplets/community/x86-linux-dynamic.cmake
+          echo "set(VCPKG_FIXUP_ELF_RPATH ON)" >> triplets/community/x86-linux-dynamic.cmake
 
       - name: Determine configuration
         id: config
