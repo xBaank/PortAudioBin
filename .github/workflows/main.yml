@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - custom_triplets
     paths-ignore:
       - "**.md"
   schedule:
@@ -48,7 +47,7 @@ jobs:
   pack:
     needs: version
     # Job outputs are passed as strings, so we need to convert the value to an actual boolean
-    # if: ${{ fromJson(needs.version.outputs.stale) }}
+    if: ${{ fromJson(needs.version.outputs.stale) }}
 
     strategy:
       fail-fast: false
