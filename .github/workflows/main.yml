@@ -117,7 +117,7 @@ jobs:
           ${{ runner.os == 'Linux' && 'sudo apt install -y g++-multilib' || '' }}
           ${{ runner.os == 'Linux' && 'echo "deb http://cz.archive.ubuntu.com/ubuntu mantic main" | sudo tee /etc/apt/sources.list.d/temporary-repository.list' || '' }}
           ${{ runner.os == 'Linux' && 'sudo apt update' || '' }}
-          ${{ runner.os == 'Linux' && 'sudo apt install -y gcc-14 gcc-14-aarch64-linux-gnu' || '' }}
+          ${{ runner.os == 'Linux' && 'sudo apt install -y libc6=2.31-0ubuntu9 gcc-13 gcc-13-aarch64-linux-gnu' || '' }}
           ${{ runner.os == 'MacOS' && 'brew install autoconf' || '' }}
           ${{ runner.os == 'MacOS' && 'brew install automake' || '' }}
           ${{ runner.os == 'MacOS' && 'brew install libtool' || '' }}
