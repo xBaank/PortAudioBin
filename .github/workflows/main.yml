@@ -18,7 +18,7 @@ on:
 jobs:
   # Check if the latest version of PortAudio in vcpkg is newer than the latest release
   version:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
 
