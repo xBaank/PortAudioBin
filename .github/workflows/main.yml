@@ -18,7 +18,7 @@ on:
 jobs:
   # Check if the latest version of PortAudio in vcpkg is newer than the latest release
   version:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
 
@@ -115,7 +115,7 @@ jobs:
           ${{ runner.os == 'Linux' && 'sudo apt install libtool' || '' }}
           ${{ runner.os == 'Linux' && 'sudo apt install -y gcc-multilib' || '' }}
           ${{ runner.os == 'Linux' && 'sudo apt install -y g++-multilib' || '' }}
-          ${{ runner.os == 'Linux' && 'sudo apt install -y gcc-13-aarch64-linux-gnu' || '' }}
+          ${{ runner.os == 'Linux' && 'sudo apt install -y gcc-14-aarch64-linux-gnu' || '' }}
           ${{ runner.os == 'MacOS' && 'brew install autoconf' || '' }}
           ${{ runner.os == 'MacOS' && 'brew install automake' || '' }}
           ${{ runner.os == 'MacOS' && 'brew install libtool' || '' }}
