@@ -24,4 +24,4 @@ To learn more about the war and how you can help, [click here](https://tyrrrz.me
 
 ## Credits
 
-Thannks to [Tyrrrz](https://github.com/Tyrrrz) and his work from [FFmpegBin](https://github.com/Tyrrrz/FFmpegBin)
+Thanks to [Tyrrrz](https://github.com/Tyrrrz) and his work from [FFmpegBin](https://github.com/Tyrrrz/FFmpegBin)
