@@ -1,0 +1,220 @@
+name: main
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "**.md"
+  schedule:
+    - cron: "0 0 1 * *"
+  workflow_dispatch:
+    inputs:
+      skip-version-check:
+        type: boolean
+        description: Skip version check
+        required: false
+
+jobs:
+  # Check if the latest version of PortAudio in vcpkg is newer than the latest release
+  version:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout vcpkg
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # 4.1.7
+        with:
+          repository: microsoft/vcpkg
+          ref: master
+
+      - name: Get latest PortAudio package
+        id: latest-portaudio
+        run: echo "version=$(cat ports/portaudio/vcpkg.json | jq -r '.version')" >> $GITHUB_OUTPUT
+
+      - name: Get latest release
+        id: latest-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: echo "version=$(gh release view --json tagName --jq .tagName --repo ${{ github.event.repository.full_name }})" >> $GITHUB_OUTPUT
+
+    outputs:
+      version: ${{ steps.latest-portaudio.outputs.version }}
+      stale: ${{ inputs.skip-version-check || steps.latest-portaudio.outputs.version != steps.latest-release.outputs.version }}
+
+  # Build PortAudio for all supported platforms
+  pack:
+    needs: version
+    # Job outputs are passed as strings, so we need to convert the value to an actual boolean
+    if: ${{ fromJson(needs.version.outputs.stale) }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        target-platform:
+          - linux
+          - windows
+          - osx
+        target-arch:
+          - x64
+          - x86
+          - arm64
+        include:
+          - target-platform: linux
+            os: ubuntu-latest
+          - target-platform: windows
+            os: windows-latest
+          - target-platform: osx
+            os: macos-latest
+        exclude:
+          - target-platform: osx
+            target-arch: x86
+          - target-platform: linux
+            target-arch: arm64
+
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+      actions: write
+
+    steps:
+      - name: Checkout vcpkg
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # 4.1.7
+        with:
+          repository: microsoft/vcpkg
+          ref: master
+
+      - name: Bootstrap vcpkg
+        run: ${{ runner.os == 'Windows' && './bootstrap-vcpkg.bat' || './bootstrap-vcpkg.sh' }}
+
+      - name: Determine configuration
+        id: config
+        shell: bash
+        run: |
+          moniker="${{ matrix.target-arch }}-${{ matrix.target-platform }}"
+
+          triplet_preferences=(
+            "$moniker-dynamic-release"
+            "$moniker-dynamic"
+            "$moniker-release"
+            "$moniker"
+          )
+
+          triplet=$(
+            for triplet in "${triplet_preferences[@]}"; do
+              if [ -f "triplets/$triplet.cmake" ] || [ -f "triplets/community/$triplet.cmake" ]; then
+                echo "$triplet"
+                break
+              fi
+            done
+          )
+
+          echo "triplet=$triplet" >> $GITHUB_OUTPUT
+
+      - name: Install dependencies
+        run: |
+          ${{ runner.os == 'Linux' && 'sudo apt install autoconf' || '' }}
+          ${{ runner.os == 'Linux' && 'sudo apt install automake' || '' }}
+          ${{ runner.os == 'Linux' && 'sudo apt install libtool' || '' }}
+          ${{ runner.os == 'Linux' && 'sudo apt install -y gcc-multilib' || '' }}
+          ${{ runner.os == 'Linux' && 'sudo apt install -y g++-multilib' || '' }}
+          ${{ runner.os == 'MacOS' && 'brew install autoconf' || '' }}
+          ${{ runner.os == 'MacOS' && 'brew install automake' || '' }}
+          ${{ runner.os == 'MacOS' && 'brew install libtool' || '' }}
+
+      - name: Build PortAudio
+        run: >
+          ./vcpkg install portaudio
+          --triplet ${{ steps.config.outputs.triplet }}
+          --recurse
+
+      - name: List installed files
+        run: |
+          echo "Listing installed files in: installed/${{ steps.config.outputs.triplet }}/"
+          ls -R installed/${{ steps.config.outputs.triplet }}/
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # 4.3.6
+        with:
+          name: portaudio-${{ matrix.target-platform }}-${{ matrix.target-arch }}
+          path: |
+            installed/${{ steps.config.outputs.triplet }}/lib/
+            installed/${{ steps.config.outputs.triplet }}/bin/
+          if-no-files-found: error
+
+  # Create a new release with the tag matching the PortAudio version
+  release:
+    needs:
+      - version
+      - pack
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >
+          gh release create ${{ needs.version.outputs.version }}
+          --title ${{ needs.version.outputs.version }}
+          --notes "Built on $(date +'%Y-%m-%d')"
+          --repo ${{ github.event.repository.full_name }}
+
+  # Upload the built artifacts to the release
+  deploy:
+    needs:
+      - version
+      - release
+
+    strategy:
+      matrix:
+        target-platform:
+          - linux
+          - windows
+          - osx
+        target-arch:
+          - x64
+          - x86
+          - arm64
+        exclude:
+          - target-platform: osx
+            target-arch: x86
+          - target-platform: linux
+            target-arch: x86
+          - target-platform: linux
+            target-arch: arm64
+
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: write
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # 4.1.8
+        with:
+          name: portaudio-${{ matrix.target-platform }}-${{ matrix.target-arch }}
+          path: portaudio/
+
+      - name: Create package
+        working-directory: portaudio/
+        run: zip -r ../portaudio-${{ matrix.target-platform }}-${{ matrix.target-arch }}.zip .
+
+      - name: Calculate checksum
+        run: >
+          shasum portaudio-${{ matrix.target-platform }}-${{ matrix.target-arch }}.zip
+          --algorithm 256
+          --binary
+          > portaudio-${{ matrix.target-platform }}-${{ matrix.target-arch }}.zip.sha256
+
+      - name: Upload release assets
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >
+          gh release upload ${{ needs.version.outputs.version }}
+          portaudio-${{ matrix.target-platform }}-${{ matrix.target-arch }}.zip
+          portaudio-${{ matrix.target-platform }}-${{ matrix.target-arch }}.zip.sha256
+          --repo ${{ github.event.repository.full_name }}
