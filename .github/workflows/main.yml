@@ -95,11 +95,8 @@ jobs:
           moniker="${{ matrix.target-arch }}-${{ matrix.target-platform }}"
 
           triplet_preferences=(
+            "$moniker-dynamic-release"
             "$moniker-dynamic"
-            "$moniker-static-release"
-            "$moniker-static"
-            "$moniker-release"
-            "$moniker"
           )
 
           triplet=$(
