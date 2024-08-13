@@ -129,8 +129,8 @@ jobs:
 
       - name: List installed files
         run: |
-          echo "Listing installed files in: installed/${{ steps.config.outputs.triplet }}/lib/"
-          ls -R installed/${{ steps.config.outputs.triplet }}/lib/
+          echo "Listing installed files in: installed/${{ steps.config.outputs.triplet }}/"
+          ls -R installed/${{ steps.config.outputs.triplet }}/
 
       - name: Upload artifacts
         uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # 4.3.6
