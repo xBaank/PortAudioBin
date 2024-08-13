@@ -136,7 +136,9 @@ jobs:
         uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # 4.3.6
         with:
           name: portaudio-${{ matrix.target-platform }}-${{ matrix.target-arch }}
-          path: installed/${{ steps.config.outputs.triplet }}/lib/
+          path: |
+            installed/${{ steps.config.outputs.triplet }}/lib/
+            installed/${{ steps.config.outputs.triplet }}/bin/
           if-no-files-found: error
 
   # Create a new release with the tag matching the PortAudio version
