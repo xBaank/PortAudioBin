@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - custom_triplets
     paths-ignore:
       - "**.md"
   schedule:
@@ -47,7 +48,7 @@ jobs:
   pack:
     needs: version
     # Job outputs are passed as strings, so we need to convert the value to an actual boolean
-    if: ${{ fromJson(needs.version.outputs.stale) }}
+    # if: ${{ fromJson(needs.version.outputs.stale) }}
 
     strategy:
       fail-fast: false
@@ -85,6 +86,15 @@ jobs:
 
       - name: Bootstrap vcpkg
         run: ${{ runner.os == 'Windows' && './bootstrap-vcpkg.bat' || './bootstrap-vcpkg.sh' }}
+
+      - name: Create custom arm64 triplet file
+        run: |
+          mkdir -p triplets/community
+          echo "set(VCPKG_TARGET_ARCHITECTURE ${{matrix.target-arch}})" > triplets/community/arm64-linux-dynamic.cmake
+          echo "set(VCPKG_CRT_LINKAGE dynamic)" >> triplets/community/arm64-linux-dynamic.cmake
+          echo "set(VCPKG_BUILD_TYPE release)" >> triplets/community/arm64-linux-dynamic.cmake
+          echo "set(VCPKG_CMAKE_SYSTEM_NAME Linux)" >> triplets/community/arm64-linux-dynamic.cmake
+          echo "set(VCPKG_FIXUP_ELF_RPATH ON)" >> triplets/community/arm64-linux-dynamic.cmake
 
       - name: Determine configuration
         id: config
