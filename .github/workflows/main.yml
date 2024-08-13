@@ -97,6 +97,8 @@ jobs:
           triplet_preferences=(
             "$moniker-dynamic-release"
             "$moniker-dynamic"
+            "$moniker-release"
+            "$moniker"
           )
 
           triplet=$(
