@@ -181,10 +181,6 @@ jobs:
         exclude:
           - target-platform: osx
             target-arch: x86
-          - target-platform: linux
-            target-arch: x86
-          - target-platform: linux
-            target-arch: arm64
 
     runs-on: ubuntu-latest
     permissions:
