@@ -46,6 +46,8 @@ jobs:
   # Build PortAudio for all supported platforms
   pack:
     needs: version
+    # Job outputs are passed as strings, so we need to convert the value to an actual boolean
+    if: ${{ fromJson(needs.version.outputs.stale) }}
 
     strategy:
       fail-fast: false
