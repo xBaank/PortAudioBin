@@ -115,7 +115,7 @@ jobs:
           ${{ runner.os == 'Linux' && 'sudo apt install libtool' || '' }}
           ${{ runner.os == 'Linux' && 'sudo apt install -y gcc-multilib' || '' }}
           ${{ runner.os == 'Linux' && 'sudo apt install -y g++-multilib' || '' }}
-          ${{ runner.os == 'Linux' && 'sudo apt install -y aarch64-linux-gnu-gcc' || '' }}
+          ${{ runner.os == 'Linux' && runner.arch == 'ARM64' && 'sudo apt install -y aarch64-linux-gnu-gcc' || '' }}
           ${{ runner.os == 'MacOS' && 'brew install autoconf' || '' }}
           ${{ runner.os == 'MacOS' && 'brew install automake' || '' }}
           ${{ runner.os == 'MacOS' && 'brew install libtool' || '' }}
