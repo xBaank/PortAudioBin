@@ -46,7 +46,6 @@ jobs:
   # Build PortAudio for all supported platforms
   pack:
     needs: version
-    if: ${{ fromJson(needs.version.outputs.stale) }}
 
     strategy:
       fail-fast: false
