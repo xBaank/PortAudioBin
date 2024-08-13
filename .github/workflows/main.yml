@@ -90,9 +90,9 @@ jobs:
       - name: Create custom arm64 triplet file
         run: |
           mkdir -p triplets/community
-          echo "set(VCPKG_TARGET_ARCHITECTURE ${{matrix.target-arch}})" > triplets/community/arm64-linux-dynamic.cmake
+          echo "set(VCPKG_TARGET_ARCHITECTURE arm64)" > triplets/community/arm64-linux-dynamic.cmake
           echo "set(VCPKG_CRT_LINKAGE dynamic)" >> triplets/community/arm64-linux-dynamic.cmake
-          echo "set(VCPKG_BUILD_TYPE release)" >> triplets/community/arm64-linux-dynamic.cmake
+          echo "set(VCPKG_LIBRARY_LINKAGE dynamic)" >> triplets/community/arm64-linux-dynamic.cmake
           echo "set(VCPKG_CMAKE_SYSTEM_NAME Linux)" >> triplets/community/arm64-linux-dynamic.cmake
           echo "set(VCPKG_FIXUP_ELF_RPATH ON)" >> triplets/community/arm64-linux-dynamic.cmake
 
