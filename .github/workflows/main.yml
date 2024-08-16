@@ -135,7 +135,7 @@ jobs:
           ${{ runner.os == 'Linux' && 'sudo apt install autoconf' || '' }}
           ${{ runner.os == 'Linux' && 'sudo apt install automake' || '' }}
           ${{ runner.os == 'Linux' && 'sudo apt install libtool' || '' }}
-          ${{ runner.os == 'Linux' && matrix.target-arch  == 'x64' && && 'sudo apt install libasound-dev' || '' }}
+          ${{ runner.os == 'Linux' && matrix.target-arch  == 'x64' && 'sudo apt install libasound-dev' || '' }}
           ${{ runner.os == 'Linux' && matrix.target-arch  == 'x86' && 'sudo dpkg --add-architecture i386 && sudo apt update' || '' }}
           ${{ runner.os == 'Linux' && matrix.target-arch  == 'x86' && 'sudo apt install libasound2-dev:i386' || '' }}
           ${{ runner.os == 'Linux' && matrix.target-arch  == 'arm64' && 'dpkg --add-architecture arm64\
