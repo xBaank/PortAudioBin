@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - native-apis
     paths-ignore:
       - "**.md"
   schedule:
@@ -47,7 +48,7 @@ jobs:
   pack:
     needs: version
     # Job outputs are passed as strings, so we need to convert the value to an actual boolean
-    if: ${{ fromJson(needs.version.outputs.stale) }}
+    # if: ${{ fromJson(needs.version.outputs.stale) }}
 
     strategy:
       fail-fast: false
@@ -135,6 +136,8 @@ jobs:
           ${{ runner.os == 'Linux' && 'sudo apt install automake' || '' }}
           ${{ runner.os == 'Linux' && 'sudo apt install libtool' || '' }}
           ${{ runner.os == 'Linux' && 'sudo apt install libasound-dev' || '' }}
+          ${{ runner.os == 'Linux' && matrix.target-arch  == 'x86 && 'sudo apt install libasound-dev:i386' || '' }}
+          ${{ runner.os == 'Linux' && matrix.target-arch  == 'arm64 && 'sudo apt install libasound-dev:arm64' || '' }}
           ${{ runner.os == 'Linux' && matrix.target-arch  == 'x86' && 'sudo apt install -y gcc-multilib' || '' }}
           ${{ runner.os == 'Linux' && matrix.target-arch == 'x86' && 'sudo apt install -y g++-multilib' || '' }}
           ${{ runner.os == 'Linux' && matrix.target-arch == 'arm64' && 'sudo apt install -y binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu g++-aarch64-linux-gnu' || '' }}
