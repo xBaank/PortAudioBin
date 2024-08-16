@@ -138,7 +138,7 @@ jobs:
           ${{ runner.os == 'Linux' && matrix.target-arch  == 'x64' && 'sudo apt install libasound-dev' || '' }}
           ${{ runner.os == 'Linux' && matrix.target-arch  == 'x86' && 'sudo dpkg --add-architecture i386 && sudo apt update' || '' }}
           ${{ runner.os == 'Linux' && matrix.target-arch  == 'x86' && 'sudo apt install libasound2-dev:i386' || '' }}
-          ${{ runner.os == 'Linux' && matrix.target-arch  == 'arm64' && 'dpkg --add-architecture arm64 && sudo apt-get clean && sudo apt-get autoclean && sudo rm -rf /var/lib/apt/lists/ && sudo apt update&& sudo apt update' || '' }}
+          ${{ runner.os == 'Linux' && matrix.target-arch  == 'arm64' && 'dpkg --add-architecture arm64 && sudo apt-get clean && sudo apt-get autoclean && sudo rm -rf /var/lib/apt/lists/ && sudo apt update && sudo apt update' || '' }}
           ${{ runner.os == 'Linux' && matrix.target-arch  == 'arm64' && 'sudo apt install libasound2-dev:arm64' || '' }}
           ${{ runner.os == 'Linux' && matrix.target-arch  == 'x86' && 'sudo apt install -y gcc-multilib g++-multilib' || '' }}
           ${{ runner.os == 'Linux' && matrix.target-arch == 'arm64' && 'sudo apt install -y binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu g++-aarch64-linux-gnu' || '' }}
