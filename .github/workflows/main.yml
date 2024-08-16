@@ -134,6 +134,7 @@ jobs:
           ${{ runner.os == 'Linux' && 'sudo apt install autoconf' || '' }}
           ${{ runner.os == 'Linux' && 'sudo apt install automake' || '' }}
           ${{ runner.os == 'Linux' && 'sudo apt install libtool' || '' }}
+          ${{ runner.os == 'Linux' && 'sudo apt install libasound-dev' || '' }}
           ${{ runner.os == 'Linux' && matrix.target-arch  == 'x86' && 'sudo apt install -y gcc-multilib' || '' }}
           ${{ runner.os == 'Linux' && matrix.target-arch == 'x86' && 'sudo apt install -y g++-multilib' || '' }}
           ${{ runner.os == 'Linux' && matrix.target-arch == 'arm64' && 'sudo apt install -y binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu g++-aarch64-linux-gnu' || '' }}
