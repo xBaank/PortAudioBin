@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - native-apis
     paths-ignore:
       - "**.md"
   schedule:
@@ -143,6 +144,7 @@ jobs:
 
       - name: Build PortAudio
         run: >
+          cmake -B build -S . -DPA_USE_DS=1 -DPA_USE_WMME=1 -DPA_USE_WASAPI=1 -DPA_USE_WDMKS=1
           ./vcpkg install portaudio
           --triplet ${{ steps.config.outputs.triplet }}
           --recurse
