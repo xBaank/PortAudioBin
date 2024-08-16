@@ -144,7 +144,8 @@ jobs:
             echo "deb [arch=arm64] http://ports.ubuntu.com/ focal-backports main multiverse universe" | sudo tee -a /etc/apt/sources.list &&
             echo "deb [arch=arm64] http://ports.ubuntu.com/ focal-updates main multiverse universe" | sudo tee -a /etc/apt/sources.list &&
             sudo dpkg --add-architecture arm64 &&
-            sudo apt update || true' || '' }}
+            sudo apt update || true && 
+            sudo apt dist-upgrade' || '' }}
           ${{ runner.os == 'Linux' && matrix.target-arch  == 'arm64' && 'sudo apt install -f libasound2-dev:arm64' || '' }}
           ${{ runner.os == 'Linux' && matrix.target-arch  == 'x86' && 'sudo apt install -y gcc-multilib g++-multilib' || '' }}
           ${{ runner.os == 'Linux' && matrix.target-arch == 'arm64' && 'sudo apt install -y binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu g++-aarch64-linux-gnu' || '' }}
