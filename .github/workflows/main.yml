@@ -105,11 +105,6 @@ jobs:
           echo "set(VCPKG_LIBRARY_LINKAGE dynamic)" >> triplets/community/x86-linux-dynamic.cmake
           echo "set(VCPKG_CMAKE_SYSTEM_NAME Linux)" >> triplets/community/x86-linux-dynamic.cmake
           echo "set(VCPKG_FIXUP_ELF_RPATH ON)" >> triplets/community/x86-linux-dynamic.cmake
-          echo "add_definitions(PA_USE_ASIO=1)" >> triplets/community/x86-linux-dynamic.cmake
-          echo "add_definitions(PA_USE_DS=1)" >> triplets/community/x86-linux-dynamic.cmake
-          echo "add_definitions(PA_USE_WMME=1)" >> triplets/community/x86-linux-dynamic.cmake
-          echo "add_definitions(PA_USE_WASAPI=1)" >> triplets/community/x86-linux-dynamic.cmake
-          echo "add_definitions(PA_USE_WDMKS=1)" >> triplets/community/x86-linux-dynamic.cmake
 
       - name: Determine configuration
         id: config
@@ -163,7 +158,7 @@ jobs:
         with:
           name: portaudio-${{ matrix.target-platform }}-${{ matrix.target-arch }}
           path: |
-            installed/${{ steps.config.outputs.triplet }}/lib/
+            installed/${{ steps.config.outputs.triplet }}/debug/lib/
             installed/${{ steps.config.outputs.triplet }}/bin/
           if-no-files-found: error
 
