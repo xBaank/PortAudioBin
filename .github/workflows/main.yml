@@ -148,7 +148,7 @@ jobs:
           ${{ runner.os == 'MacOS' && 'brew install libtool' || '' }}
 
       - name: Build PortAudio
-        run: |
+        run: >
           ./vcpkg install portaudio
           --triplet ${{ steps.config.outputs.triplet }}
           --recurse
