@@ -145,7 +145,7 @@ jobs:
           ${{ runner.os == 'Linux' && matrix.target-arch  == 'x86' && 'sudo dpkg --add-architecture i386 && sudo apt update' || '' }}
           ${{ runner.os == 'Linux' && matrix.target-arch  == 'x86' && 'sudo aptitude install -y -f libasound-dev:i386' || '' }}
           
-          ${{ runner.os == 'Linux' && matrix.target-arch  == 'arm64' 'sudo dpkg --add-architecture arm64 && sudo apt update || true' || '' }}
+          ${{ runner.os == 'Linux' && matrix.target-arch  == 'arm64' && 'sudo dpkg --add-architecture arm64 && sudo apt update || true' || '' }}
           ${{ runner.os == 'Linux' && matrix.target-arch  == 'arm64' && 'sudo aptitude install -y -f libasound-dev:arm64' || '' }}
           
           ${{ runner.os == 'MacOS' && 'brew install autoconf' || '' }}
