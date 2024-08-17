@@ -130,6 +130,11 @@ jobs:
 
           echo "triplet=$triplet" >> $GITHUB_OUTPUT
 
+      - uses: maxim-lobanov/setup-xcode@v1
+        if: ${{ runner.os == 'MacOS' }}
+        with:
+          xcode-version: latest
+
       - name: Install dependencies
         run: |
           ${{ runner.os == 'Linux' && 'sudo apt install autoconf' || '' }}
