@@ -96,7 +96,7 @@ jobs:
           echo "set(VCPKG_LIBRARY_LINKAGE dynamic)" >> triplets/community/arm64-linux-dynamic.cmake
           echo "set(VCPKG_CMAKE_SYSTEM_NAME Linux)" >> triplets/community/arm64-linux-dynamic.cmake
           echo "set(VCPKG_FIXUP_ELF_RPATH ON)" >> triplets/community/arm64-linux-dynamic.cmake
-      - name: Create custom arm64 triplet file
+      - name: Create custom x86 triplet file
         if: ${{ runner.os == 'Linux' }}
         run: |
           mkdir -p triplets/community
@@ -136,23 +136,17 @@ jobs:
           ${{ runner.os == 'Linux' && 'sudo apt install automake' || '' }}
           ${{ runner.os == 'Linux' && 'sudo apt install libtool' || '' }}
           ${{ runner.os == 'Linux' && 'sudo apt install aptitude' || '' }}
+
+          ${{ runner.os == 'Linux' && matrix.target-arch  == 'x86' && 'sudo apt install -y gcc-multilib g++-multilib' || '' }}
+          ${{ runner.os == 'Linux' && matrix.target-arch == 'arm64' && 'sudo apt install -y binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu g++-aarch64-linux-gnu' || '' }}
           
           ${{ runner.os == 'Linux' && matrix.target-arch  == 'x64' && 'sudo aptitude install -y -f libasound-dev' || '' }}
       
           ${{ runner.os == 'Linux' && matrix.target-arch  == 'x86' && 'sudo dpkg --add-architecture i386 && sudo apt update' || '' }}
           ${{ runner.os == 'Linux' && matrix.target-arch  == 'x86' && 'sudo aptitude install -y -f libasound-dev:i386' || '' }}
           
-          ${{ runner.os == 'Linux' && matrix.target-arch  == 'arm64' && '
-            echo "deb [arch=arm64] http://ports.ubuntu.com/ focal main multiverse universe" | sudo tee -a /etc/apt/sources.list &&
-            echo "deb [arch=arm64] http://ports.ubuntu.com/ focal-security main multiverse universe" | sudo tee -a /etc/apt/sources.list &&
-            echo "deb [arch=arm64] http://ports.ubuntu.com/ focal-backports main multiverse universe" | sudo tee -a /etc/apt/sources.list &&
-            echo "deb [arch=arm64] http://ports.ubuntu.com/ focal-updates main multiverse universe" | sudo tee -a /etc/apt/sources.list &&
-            sudo dpkg --add-architecture arm64 &&
-            sudo apt update || true' || '' }}
+          ${{ runner.os == 'Linux' && matrix.target-arch  == 'arm64' 'sudo dpkg --add-architecture arm64 && sudo apt update || true' || '' }}
           ${{ runner.os == 'Linux' && matrix.target-arch  == 'arm64' && 'sudo aptitude install -y -f libasound-dev:arm64' || '' }}
-          
-          ${{ runner.os == 'Linux' && matrix.target-arch  == 'x86' && 'sudo apt install -y gcc-multilib g++-multilib' || '' }}
-          ${{ runner.os == 'Linux' && matrix.target-arch == 'arm64' && 'sudo apt install -y binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu g++-aarch64-linux-gnu' || '' }}
           
           ${{ runner.os == 'MacOS' && 'brew install autoconf' || '' }}
           ${{ runner.os == 'MacOS' && 'brew install automake' || '' }}
