@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - native-apis
     paths-ignore:
       - "**.md"
   schedule:
@@ -47,7 +48,7 @@ jobs:
   pack:
     needs: version
     # Job outputs are passed as strings, so we need to convert the value to an actual boolean
-    if: ${{ fromJson(needs.version.outputs.stale) }}
+    # if: ${{ fromJson(needs.version.outputs.stale) }}
 
     strategy:
       fail-fast: false
@@ -95,7 +96,7 @@ jobs:
           echo "set(VCPKG_LIBRARY_LINKAGE dynamic)" >> triplets/community/arm64-linux-dynamic.cmake
           echo "set(VCPKG_CMAKE_SYSTEM_NAME Linux)" >> triplets/community/arm64-linux-dynamic.cmake
           echo "set(VCPKG_FIXUP_ELF_RPATH ON)" >> triplets/community/arm64-linux-dynamic.cmake
-      - name: Create custom arm64 triplet file
+      - name: Create custom x86 triplet file
         if: ${{ runner.os == 'Linux' }}
         run: |
           mkdir -p triplets/community
@@ -129,15 +130,42 @@ jobs:
 
           echo "triplet=$triplet" >> $GITHUB_OUTPUT
 
+      - uses: maxim-lobanov/setup-xcode@v1
+        if: ${{ runner.os == 'MacOS' }}
+        with:
+          xcode-version: latest
+
       - name: Install dependencies
         run: |
           ${{ runner.os == 'Linux' && 'sudo apt install autoconf' || '' }}
           ${{ runner.os == 'Linux' && 'sudo apt install automake' || '' }}
           ${{ runner.os == 'Linux' && 'sudo apt install libtool' || '' }}
-          ${{ runner.os == 'Linux' && 'sudo apt install libasound-dev' || '' }}
-          ${{ runner.os == 'Linux' && matrix.target-arch  == 'x86' && 'sudo apt install -y gcc-multilib' || '' }}
-          ${{ runner.os == 'Linux' && matrix.target-arch == 'x86' && 'sudo apt install -y g++-multilib' || '' }}
+          ${{ runner.os == 'Linux' && 'sudo apt install aptitude' || '' }}
+
+          ${{ runner.os == 'Linux' && matrix.target-arch  == 'x86' && 'sudo apt install -y gcc-multilib g++-multilib' || '' }}
           ${{ runner.os == 'Linux' && matrix.target-arch == 'arm64' && 'sudo apt install -y binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu g++-aarch64-linux-gnu' || '' }}
+          
+          ${{ runner.os == 'Linux' && matrix.target-arch  == 'x64' && 'sudo aptitude install -y -f libasound-dev' || '' }}
+      
+          ${{ runner.os == 'Linux' && matrix.target-arch  == 'x86' && 'sudo dpkg --add-architecture i386 && sudo apt update' || '' }}
+          ${{ runner.os == 'Linux' && matrix.target-arch  == 'x86' && 'sudo aptitude install -y -f libasound-dev:i386' || '' }}
+          
+          ${{ runner.os == 'Linux' && matrix.target-arch == 'arm64' && '
+              sudo dpkg --add-architecture armhf &&
+              sudo dpkg --add-architecture arm64 &&
+              sudo touch /etc/apt/sources.list.d/arm-cross-compile-sources.list &&
+              echo "deb [arch=armhf,arm64] http://ports.ubuntu.com/ focal main restricted" | sudo tee -a /etc/apt/sources.list.d/arm-cross-compile-sources.list &&
+              echo "deb [arch=armhf,arm64] http://ports.ubuntu.com/ focal-updates main restricted" | sudo tee -a /etc/apt/sources.list.d/arm-cross-compile-sources.list &&
+              echo "deb [arch=armhf,arm64] http://ports.ubuntu.com/ focal universe" | sudo tee -a /etc/apt/sources.list.d/arm-cross-compile-sources.list &&
+              echo "deb [arch=armhf,arm64] http://ports.ubuntu.com/ focal-updates universe" | sudo tee -a /etc/apt/sources.list.d/arm-cross-compile-sources.list &&
+              echo "deb [arch=armhf,arm64] http://ports.ubuntu.com/ focal multiverse" | sudo tee -a /etc/apt/sources.list.d/arm-cross-compile-sources.list &&
+              echo "deb [arch=armhf,arm64] http://ports.ubuntu.com/ focal-updates multiverse" | sudo tee -a /etc/apt/sources.list.d/arm-cross-compile-sources.list &&
+              echo "deb [arch=armhf,arm64] http://ports.ubuntu.com/ focal-backports main restricted universe multiverse" | sudo tee -a /etc/apt/sources.list.d/arm-cross-compile-sources.list &&
+              sudo sed -i "s/^deb /deb [arch=amd64] /g" /etc/apt/sources.list &&
+              sudo apt update || true
+            ' || '' }}
+          ${{ runner.os == 'Linux' && matrix.target-arch == 'arm64' && 'sudo aptitude install -y -f libasound-dev:arm64' || '' }}
+          
           ${{ runner.os == 'MacOS' && 'brew install autoconf' || '' }}
           ${{ runner.os == 'MacOS' && 'brew install automake' || '' }}
           ${{ runner.os == 'MacOS' && 'brew install libtool' || '' }}
