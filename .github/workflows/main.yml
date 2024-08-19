@@ -179,7 +179,7 @@ jobs:
           
       - name: Build PortAudio
         run: >
-          ./vcpkg install portaudio
+          sudo ./vcpkg install portaudio
           --triplet ${{ steps.config.outputs.triplet }}
           --recurse
 
