@@ -171,7 +171,7 @@ jobs:
               cd alsa-lib-1.2.12
               ./configure --enable-shared=yes --enable-static=no --with-pic --host=aarch64-linux-gnu --prefix=/usr/aarch64-linux-gnu
               make -j$(nproc)
-              make install
+              sudo make install
             ' || '' }}
           
           ${{ runner.os == 'MacOS' && 'brew install autoconf' || '' }}
