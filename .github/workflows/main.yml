@@ -60,7 +60,8 @@ jobs:
         target-arch:
           - x64
           - x86
-          - uni
+          - arm64
+          - uni #Specific for macos
         include:
           - target-platform: linux
             os: ubuntu-latest
@@ -73,6 +74,12 @@ jobs:
             target-arch: x86
           - target-platform: osx
             target-arch: x64
+          - target-platform: osx
+            target-arch: arm64
+          - target-platform: windows
+            target-arch: uni
+          - target-platform: linux
+            target-arch: uni
 
     runs-on: ${{ matrix.os }}
     permissions:
