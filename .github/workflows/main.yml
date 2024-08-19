@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - fix-osx
     paths-ignore:
       - "**.md"
   schedule:
@@ -47,7 +48,7 @@ jobs:
   pack:
     needs: version
     # Job outputs are passed as strings, so we need to convert the value to an actual boolean
-    if: ${{ fromJson(needs.version.outputs.stale) }}
+    # if: ${{ fromJson(needs.version.outputs.stale) }}
 
     strategy:
       fail-fast: false
@@ -59,7 +60,7 @@ jobs:
         target-arch:
           - x64
           - x86
-          - arm64
+          - uni
         include:
           - target-platform: linux
             os: ubuntu-latest
@@ -70,6 +71,8 @@ jobs:
         exclude:
           - target-platform: osx
             target-arch: x86
+          - target-platform: osx
+            target-arch: x64
 
     runs-on: ${{ matrix.os }}
     permissions:
@@ -104,6 +107,15 @@ jobs:
           echo "set(VCPKG_LIBRARY_LINKAGE dynamic)" >> triplets/community/x86-linux-dynamic.cmake
           echo "set(VCPKG_CMAKE_SYSTEM_NAME Linux)" >> triplets/community/x86-linux-dynamic.cmake
           echo "set(VCPKG_FIXUP_ELF_RPATH ON)" >> triplets/community/x86-linux-dynamic.cmake
+      - name: Create custom universal osx triplet file
+        if: ${{ runner.os == 'MacOS' }}
+        run: |
+          mkdir -p triplets/community
+          echo "set(VCPKG_TARGET_ARCHITECTURE arm64)" > triplets/community/uni-osx-dynamic.cmake
+          echo "set(VCPKG_CRT_LINKAGE dynamic)" >> triplets/community/uni-osx-dynamic.cmake
+          echo "set(VCPKG_LIBRARY_LINKAGE dynamic)" >> triplets/community/uni-osx-dynamic.cmake
+          echo "set(VCPKG_CMAKE_SYSTEM_NAME Darwin)" >> triplets/community/uni-osx-dynamic.cmake
+          echo "set(VCPKG_OSX_ARCHITECTURES "arm64;x86_64")" >> triplets/community/uni-osx-dynamic.cmake
 
       - name: Determine configuration
         id: config
