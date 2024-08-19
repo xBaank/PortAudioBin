@@ -138,6 +138,7 @@ jobs:
       - name: Install dependencies
         run: |
           ${{ runner.os == 'Linux' && 'sudo apt install autoconf' || '' }}
+          ${{ runner.os == 'Linux' && 'sudo apt install make' || '' }}
           ${{ runner.os == 'Linux' && 'sudo apt install automake' || '' }}
           ${{ runner.os == 'Linux' && 'sudo apt install libtool' || '' }}
           ${{ runner.os == 'Linux' && 'sudo apt install aptitude' || '' }}
@@ -164,22 +165,23 @@ jobs:
               sudo sed -i "s/^deb /deb [arch=amd64] /g" /etc/apt/sources.list &&
               sudo apt update || true
             ' || '' }}
-          ${{ runner.os == 'Linux' && matrix.target-arch == 'arm64' && 'sudo aptitude install -y -f libasound-dev:arm64' || '' }}
+          ${{ runner.os == 'Linux' && matrix.target-arch == 'arm64' && '
+              wget http://www.alsa-project.org/files/pub/lib/alsa-lib-1.2.12.tar.bz2
+              tar xf alsa-lib-1.2.12.tar.bz2
+              cd alsa-lib-1.2.12
+              ./configure --enable-shared=yes --enable-static=yes --with-pic --host=aarch64-linux-gnu --prefix=/usr/aarch64-linux-gnu
+              make -j$(nproc)
+              make install
+            ' || '' }}
           
           ${{ runner.os == 'MacOS' && 'brew install autoconf' || '' }}
           ${{ runner.os == 'MacOS' && 'brew install automake' || '' }}
           ${{ runner.os == 'MacOS' && 'brew install libtool' || '' }}
-
-      - name: Build Alsa (arm64)
-        if: ${{ runner.os == 'Linux' && matrix.target-arch == 'arm64' }}
-        run: >
-          sudo ./vcpkg install alsa
-          --triplet arm64-linux
-          --recurse
+          
           
       - name: Build PortAudio
         run: >
-          sudo ./vcpkg install portaudio
+          ./vcpkg install portaudio
           --triplet ${{ steps.config.outputs.triplet }}
           --recurse
 
