@@ -170,6 +170,13 @@ jobs:
           ${{ runner.os == 'MacOS' && 'brew install automake' || '' }}
           ${{ runner.os == 'MacOS' && 'brew install libtool' || '' }}
 
+      - name: Build Alsa (arm64)
+        if: ${{ runner.os == 'Linux' && matrix.target-arch == 'arm64' }}
+        run: >
+          sudo ./vcpkg install alsa
+          --triplet arm64-linux
+          --recurse
+          
       - name: Build PortAudio
         run: >
           ./vcpkg install portaudio
