@@ -239,9 +239,18 @@ jobs:
           - x64
           - x86
           - arm64
+          - uni
         exclude:
           - target-platform: osx
             target-arch: x86
+          - target-platform: osx
+            target-arch: x64
+          - target-platform: osx
+            target-arch: arm64
+          - target-platform: windows
+            target-arch: uni
+          - target-platform: linux
+            target-arch: uni
 
     runs-on: ubuntu-latest
     permissions:
