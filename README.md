@@ -4,7 +4,7 @@
 [![Downloads](https://img.shields.io/github/downloads/xBaank/PortAudioBin/total.svg)](https://github.com/xBaank/PortAudioBin/releases)
 [![Fuck Russia](https://img.shields.io/badge/fuck-russia-e4181c.svg?labelColor=000000)](https://twitter.com/tyrrrz/status/1495972128977571848)
 
-**PortAudioBin** is a repository that contains static builds of [Portaudio](https://portaudio.com) for Windows, Linux and macOS.
+**PortAudioBin** is a repository that contains dynamic builds of [Portaudio](https://portaudio.com) for Windows, Linux and macOS.
 
 ## Terms of use<sup>[[?]](https://github.com/Tyrrrz/.github/blob/master/docs/why-so-political.md)</sup>
 
